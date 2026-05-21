@@ -1,27 +1,49 @@
 "use client";
 
 import dynamic from 'next/dynamic';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { dashboardService } from '@/services/api/dashboard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Dynamically import ECharts to reduce initial bundle size
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 export default function DashboardPage() {
-  
-  // Dummy analytics metrics for UI architecture demo
+  const { data: stats, isLoading, error } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: () => dashboardService.getStatistics(),
+  });
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (error) {
+    return <div className="text-destructive">Error loading dashboard stats</div>;
+  }
+
   const metrics = [
-    { title: "Total Orders", value: "342", trend: "+12%" },
-    { title: "Revenue", value: "$4,231", trend: "+8%" },
-    { title: "New Students", value: "84", trend: "+2%" },
-    { title: "Active Groups", value: "12", trend: "0%" },
+    { title: "Total Orders", value: stats?.totalOrders?.toString() || "0", trend: "Lifetime" },
+    { title: "Revenue", value: `$${stats?.totalRevenue?.toLocaleString() || "0"}`, trend: "Lifetime" },
+    { title: "Cakes Sold", value: stats?.totalCakesSold?.toString() || "0", trend: "Lifetime" },
+    { title: "Pending Payment", value: `$${stats?.totalPendingPayment?.toLocaleString() || "0"}`, trend: "Current" },
   ];
 
   const chartOption = {
     tooltip: { trigger: 'axis' },
-    xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
+    xAxis: { 
+      type: 'category', 
+      data: stats?.topSellingCakes?.map(c => c.cakeName) || [],
+      axisLabel: { interval: 0, rotate: 30 }
+    },
     yAxis: { type: 'value' },
     series: [
-      { data: [120, 200, 150, 80, 70, 110, 130], type: 'bar', color: 'hsl(var(--primary))' },
+      { 
+        data: stats?.topSellingCakes?.map(c => c.quantitySold) || [], 
+        type: 'bar', 
+        color: 'hsl(var(--primary))' 
+      },
     ]
   };
 
@@ -38,7 +60,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="text-2xl font-bold">{metric.value}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                {metric.trend} from last month
+                {metric.trend}
               </p>
             </CardContent>
           </Card>
@@ -48,11 +70,17 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Sales Overview</CardTitle>
+            <CardTitle>Top Selling Cakes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] w-full">
-              <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
+              {stats?.topSellingCakes && stats.topSellingCakes.length > 0 ? (
+                <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  No sales data yet
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -63,10 +91,27 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-sm text-muted-foreground flex items-center justify-center h-[300px]">
-              No recent activity
+              No recent activity recorded
             </div>
           </CardContent>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="h-9 w-48 bg-muted animate-pulse rounded" />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i} className="h-28" />
+        ))}
+      </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="h-[400px]" />
+        <Card className="h-[400px]" />
       </div>
     </div>
   );
