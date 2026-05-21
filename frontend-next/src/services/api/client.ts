@@ -4,22 +4,29 @@ import { useAuthStore } from '@/store/useAuthStore';
 const isServer = typeof window === 'undefined';
 
 export const apiClient = ky.create({
-  prefixUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+  prefix: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
   timeout: 10000,
   hooks: {
     beforeRequest: [
-      (request) => {
+      (request: any) => {
+        // Handle both (request) and ({ request })
+        const req = request.request || request;
         if (!isServer) {
           const token = useAuthStore.getState().token;
-          if (token) {
-            request.headers.set('Authorization', `Bearer ${token}`);
+          if (token && req.headers) {
+            req.headers.set('Authorization', `Bearer ${token}`);
           }
         }
       }
     ],
     afterResponse: [
-      async (request, options, response) => {
-        if (response.status === 401 && !isServer) {
+      // @ts-ignore - Handle varying hook signatures across ky versions
+      async (arg1: any, arg2?: any, arg3?: any) => {
+        // In newer ky, context is arg1. In older ky, response is arg3.
+        const request = arg1.request || arg1;
+        const response = arg3 || arg1.response || arg1; // Fallback to arg1 if it's the response itself
+
+        if (response && response.status === 401 && !isServer) {
           const refreshToken = useAuthStore.getState().refreshToken;
           
           if (refreshToken) {
@@ -37,8 +44,9 @@ export const apiClient = ky.create({
                 }
 
                 // Retry the original request with the new token
-                request.headers.set('Authorization', `Bearer ${accessToken}`);
-                return ky(request);
+                const retryRequest = request.request || request;
+                retryRequest.headers.set('Authorization', `Bearer ${accessToken}`);
+                return ky(retryRequest);
               }
             } catch (error) {
               console.error('Token refresh failed:', error);
@@ -51,6 +59,7 @@ export const apiClient = ky.create({
             window.location.href = '/login';
           }
         }
+        return response;
       }
     ]
   }
