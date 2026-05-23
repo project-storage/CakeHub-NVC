@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { OrderStatus, Role, Prisma } from "@prisma/client";
-import { UserPayload } from "../common/types";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { OrderStatus, Role, Prisma } from '@prisma/client';
+import { UserPayload } from '../common/types';
 
 @Injectable()
 export class DashboardService {
@@ -12,16 +12,16 @@ export class DashboardService {
     if (user.role === Role.ADVISOR) {
       const groups = await this.prisma.group.findMany({
         where: { advisorId: user.id },
-        select: { id: true }
+        select: { id: true },
       });
-      groupIds = groups.map(g => g.id);
+      groupIds = groups.map((g) => g.id);
     }
 
     const orderWhere: Prisma.OrderWhereInput = {
       deletedAt: null,
       ...(user.role === Role.ADVISOR && {
-        student: { groupId: { in: groupIds } }
-      })
+        student: { groupId: { in: groupIds } },
+      }),
     };
 
     const orderDetailWhere: Prisma.OrderDetailWhereInput = {
@@ -29,9 +29,9 @@ export class DashboardService {
         deletedAt: null,
         status: { not: OrderStatus.CANCELLED },
         ...(user.role === Role.ADVISOR && {
-          student: { groupId: { in: groupIds } }
-        })
-      }
+          student: { groupId: { in: groupIds } },
+        }),
+      },
     };
 
     const [
@@ -67,9 +67,9 @@ export class DashboardService {
 
       // Top Selling Cake
       this.prisma.orderDetail.groupBy({
-        by: ["cakeId"],
+        by: ['cakeId'],
         _sum: { quantity: true },
-        orderBy: { _sum: { quantity: "desc" } },
+        orderBy: { _sum: { quantity: 'desc' } },
         take: 5,
         where: orderDetailWhere,
       }),

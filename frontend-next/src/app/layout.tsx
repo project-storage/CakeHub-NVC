@@ -3,12 +3,13 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Orders Cake - Next.js",
-  description: "Modernized Frontend for Orders Cake",
+  title: "CakeHub - Premium Cake Booking & Ordering",
+  description: "Experience absolute luxury in ordering customized bakery and classroom cake bookings.",
 };
 
 export default function RootLayout({
@@ -21,15 +22,18 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <QueryProvider>
-            {children}
+            <PublicLayout>
+              {children}
+            </PublicLayout>
           </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+

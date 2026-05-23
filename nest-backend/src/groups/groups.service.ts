@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { CreateGroupDto } from "./dto/create-group.dto";
-import { UpdateGroupDto } from "./dto/update-group.dto";
-import { Prisma, Role } from "@prisma/client";
-import { UserPayload } from "../common/types";
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateGroupDto } from './dto/create-group.dto';
+import { UpdateGroupDto } from './dto/update-group.dto';
+import { Prisma, Role } from '@prisma/client';
+import { UserPayload } from '../common/types';
 
 @Injectable()
 export class GroupsService {
@@ -21,13 +25,18 @@ export class GroupsService {
     });
   }
 
-  async findAll(user: UserPayload, page: number = 1, limit: number = 10, search?: string) {
+  async findAll(
+    user: UserPayload,
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+  ) {
     const skip = (page - 1) * limit;
     const where: Prisma.GroupWhereInput = {
       deletedAt: null,
       ...(user.role === Role.ADVISOR && { advisorId: user.id }),
       ...(search && {
-        name: { contains: search, mode: "insensitive" },
+        name: { contains: search, mode: 'insensitive' },
       }),
     };
 
@@ -52,13 +61,13 @@ export class GroupsService {
       where: { id, deletedAt: null },
       include: { degree: true, department: true, advisor: true },
     });
-    
-    if (!record) throw new NotFoundException("Group not found");
-    
+
+    if (!record) throw new NotFoundException('Group not found');
+
     if (user.role === Role.ADVISOR && record.advisorId !== user.id) {
-      throw new ForbiddenException("You do not have access to this group");
+      throw new ForbiddenException('You do not have access to this group');
     }
-    
+
     return record;
   }
 

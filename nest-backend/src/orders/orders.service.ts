@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { CreateOrderDto, UpdateOrderDto } from "./dto/create-order.dto";
-import { Prisma, Role, OrderStatus } from "@prisma/client";
-import { UserPayload } from "../common/types";
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateOrderDto, UpdateOrderDto } from './dto/create-order.dto';
+import { Prisma, Role, OrderStatus } from '@prisma/client';
+import { UserPayload } from '../common/types';
 
 @Injectable()
 export class OrdersService {
@@ -10,12 +14,15 @@ export class OrdersService {
 
   async create(createDto: CreateOrderDto) {
     const { orderDetails, ...orderData } = createDto;
-    
+
     return this.prisma.order.create({
       data: {
         ...orderData,
         remainingAmount: orderData.totalPrice - (orderData.depositAmount || 0),
-        status: orderData.depositAmount && orderData.depositAmount > 0 ? OrderStatus.DEPOSITED : OrderStatus.PENDING,
+        status:
+          orderData.depositAmount && orderData.depositAmount > 0
+            ? OrderStatus.DEPOSITED
+            : OrderStatus.PENDING,
         orderDetails: {
           create: orderDetails,
         },
@@ -24,23 +31,28 @@ export class OrdersService {
     });
   }
 
-  async findAll(user: UserPayload, page: number = 1, limit: number = 10, status?: OrderStatus) {
+  async findAll(
+    user: UserPayload,
+    page: number = 1,
+    limit: number = 10,
+    status?: OrderStatus,
+  ) {
     const skip = (page - 1) * limit;
-    
+
     let groupIds: number[] = [];
     if (user.role === Role.ADVISOR) {
       const groups = await this.prisma.group.findMany({
         where: { advisorId: user.id },
-        select: { id: true }
+        select: { id: true },
       });
-      groupIds = groups.map(g => g.id);
+      groupIds = groups.map((g) => g.id);
     }
 
     const where: Prisma.OrderWhereInput = {
       deletedAt: null,
       ...(status && { status }),
       ...(user.role === Role.ADVISOR && {
-        student: { groupId: { in: groupIds } }
+        student: { groupId: { in: groupIds } },
       }),
     };
 
@@ -53,7 +65,7 @@ export class OrdersService {
           student: true,
           orderDetails: { include: { cake: true } },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.order.count({ where }),
     ]);
@@ -71,14 +83,16 @@ export class OrdersService {
       },
     });
 
-    if (!order) throw new NotFoundException("Order not found");
-    
+    if (!order) throw new NotFoundException('Order not found');
+
     if (user.role === Role.ADVISOR) {
-        if (!order.student?.groupId) throw new ForbiddenException("You do not have access to this order");
-        const group = await this.prisma.group.findFirst({
-            where: { id: order.student.groupId, advisorId: user.id }
-        });
-        if (!group) throw new ForbiddenException("You do not have access to this order");
+      if (!order.student?.groupId)
+        throw new ForbiddenException('You do not have access to this order');
+      const group = await this.prisma.group.findFirst({
+        where: { id: order.student.groupId, advisorId: user.id },
+      });
+      if (!group)
+        throw new ForbiddenException('You do not have access to this order');
     }
 
     return order;
