@@ -7,6 +7,141 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Student {
+  id          Int       @id @default(autoincrement())
+  studentCode String    @unique
+  fullName    String
+  citizenId   String?   @unique
+  groupId     Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  orders      Order[]
+  group       Group?    @relation(fields: [groupId], references: [id])
+
+  @@index([studentCode])
+  @@index([fullName])
+  @@map("students")
+}
+
+model Group {
+  id           Int         @id @default(autoincrement())
+  name         String
+  advisor      String?
+  degreeId     Int?
+  departmentId Int?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime?
+  degree       Degree?     @relation(fields: [degreeId], references: [id])
+  department   Department? @relation(fields: [departmentId], references: [id])
+  students     Student[]
+
+  @@index([name])
+  @@map("groups")
+}
+
+model Department {
+  id             Int       @id @default(autoincrement())
+  departmentName String    @unique
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  groups         Group[]
+
+  @@map("departments")
+}
+
+model Degree {
+  id         Int       @id @default(autoincrement())
+  degreeName String    @unique
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  groups     Group[]
+
+  @@map("degrees")
+}
+
+model Cake {
+  id           Int           @id @default(autoincrement())
+  cakeName     String
+  price        Float
+  pound        Float
+  stock        Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  orderDetails OrderDetail[]
+
+  @@index([cakeName])
+  @@map("cakes")
+}
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  userId          Int?
+  studentId       Int?
+  totalPrice      Float
+  depositAmount   Float         @default(0)
+  remainingAmount Float         @default(0)
+  status          OrderStatus   @default(PENDING)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+  orderDetails    OrderDetail[]
+  student         Student?      @relation(fields: [studentId], references: [id])
+  user            User?         @relation(fields: [userId], references: [id])
+  payments        Payment[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderDetail {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  cakeId    Int
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cake      Cake     @relation(fields: [cakeId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_details")
+}
+
+model Payment {
+  id          Int         @id @default(autoincrement())
+  orderId     Int
+  amount      Float
+  paymentDate DateTime    @default(now())
+  type        PaymentType
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([paymentDate])
+  @@map("payments")
+}
+
 enum Role {
   ADMIN
   ADVISOR
@@ -24,148 +159,4 @@ enum OrderStatus {
 enum PaymentType {
   DEPOSIT
   FULL_PAYMENT
-}
-
-model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  firstName String
-  lastName  String
-  role      Role      @default(USER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  orders    Order[]
-
-  @@map("users")
-}
-
-model Student {
-  id          Int       @id @default(autoincrement())
-  studentCode String    @unique
-  fullName    String
-  citizenId   String?   @unique
-  groupId     Int?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-
-  group       Group?    @relation(fields: [groupId], references: [id])
-  orders      Order[]
-
-  @@map("students")
-  @@index([studentCode])
-  @@index([fullName])
-}
-
-model Group {
-  id           Int       @id @default(autoincrement())
-  name         String
-  advisor      String?
-  degreeId     Int?
-  departmentId Int?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
-
-  degree       Degree?     @relation(fields: [degreeId], references: [id])
-  department   Department? @relation(fields: [departmentId], references: [id])
-  students     Student[]
-
-  @@map("groups")
-  @@index([name])
-}
-
-model Department {
-  id             Int       @id @default(autoincrement())
-  departmentName String    @unique
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
-
-  groups         Group[]
-
-  @@map("departments")
-}
-
-model Degree {
-  id         Int       @id @default(autoincrement())
-  degreeName String    @unique
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deletedAt  DateTime?
-
-  groups     Group[]
-
-  @@map("degrees")
-}
-
-model Cake {
-  id          Int       @id @default(autoincrement())
-  cakeName    String
-  price       Float
-  pound       Float
-  stock       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-
-  orderDetails OrderDetail[]
-
-  @@map("cakes")
-  @@index([cakeName])
-}
-
-model Order {
-  id              Int         @id @default(autoincrement())
-  userId          Int?
-  studentId       Int?
-  totalPrice      Float
-  depositAmount   Float       @default(0)
-  remainingAmount Float       @default(0)
-  status          OrderStatus @default(PENDING)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  deletedAt       DateTime?
-
-  user            User?       @relation(fields: [userId], references: [id])
-  student         Student?    @relation(fields: [studentId], references: [id])
-  orderDetails    OrderDetail[]
-  payments        Payment[]
-
-  @@map("orders")
-  @@index([status])
-  @@index([createdAt])
-}
-
-model OrderDetail {
-  id        Int       @id @default(autoincrement())
-  orderId   Int
-  cakeId    Int
-  quantity  Int
-  price     Float
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  cake      Cake      @relation(fields: [cakeId], references: [id])
-
-  @@map("order_details")
-}
-
-model Payment {
-  id          Int         @id @default(autoincrement())
-  orderId     Int
-  amount      Float
-  paymentDate DateTime    @default(now())
-  type        PaymentType
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  @@map("payments")
-  @@index([paymentDate])
 }
