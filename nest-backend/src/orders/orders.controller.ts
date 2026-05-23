@@ -1,7 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto, UpdateOrderDto } from './dto/create-order.dto';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { OrderStatus, Role } from '@prisma/client';
@@ -28,7 +44,11 @@ export class OrdersController {
     @Query('limit') limit?: string,
     @Query('status') status?: OrderStatus,
   ) {
-    const result = await this.ordersService.findAll(+(page || 1), +(limit || 10), status);
+    const result = await this.ordersService.findAll(
+      +(page || 1),
+      +(limit || 10),
+      status,
+    );
     return { success: true, ...result };
   }
 
@@ -42,7 +62,10 @@ export class OrdersController {
   @Roles(Role.ADMIN)
   @Patch(':id')
   @ApiOperation({ summary: 'Update order status' })
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateOrderDto: UpdateOrderDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
     const order = await this.ordersService.update(id, updateOrderDto);
     return { success: true, data: order };
   }

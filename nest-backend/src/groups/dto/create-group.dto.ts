@@ -21,5 +21,4 @@ export class CreateGroupDto {
   @IsOptional()
   @IsNumber()
   departmentId?: number;
-
 }

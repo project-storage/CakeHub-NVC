@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { DegreesService } from './degrees.service';
 import { CreateDegreeDto } from './dto/create-degree.dto';
 import { UpdateDegreeDto } from './dto/update-degree.dto';
@@ -24,8 +35,16 @@ export class DegreesController {
 
   @Get()
   @ApiOperation({ summary: 'Get all degrees' })
-  async findAll(@Query('page') page?: string, @Query('limit') limit?: string, @Query('search') search?: string) {
-    const result = await this.service.findAll(+(page || 1), +(limit || 10), search);
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    const result = await this.service.findAll(
+      +(page || 1),
+      +(limit || 10),
+      search,
+    );
     return { success: true, ...result };
   }
 
@@ -39,7 +58,10 @@ export class DegreesController {
   @Roles(Role.ADMIN, Role.ADVISOR)
   @Patch(':id')
   @ApiOperation({ summary: 'Update degree' })
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateDegreeDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateDegreeDto,
+  ) {
     const data = await this.service.update(id, updateDto);
     return { success: true, data };
   }

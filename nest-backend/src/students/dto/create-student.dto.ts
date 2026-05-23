@@ -14,12 +14,11 @@ export class CreateStudentDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsNumber()
-  citizenId?: number;
+  @IsString()
+  citizenId?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   groupId?: number;
-
 }

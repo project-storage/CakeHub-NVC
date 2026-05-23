@@ -9,7 +9,7 @@ export class StudentsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createDto: CreateStudentDto) {
-    return this.prisma.student.create({ data: createDto as any });
+    return this.prisma.student.create({ data: createDto });
   }
 
   async findAll(page: number = 1, limit: number = 10, search?: string) {
@@ -29,22 +29,30 @@ export class StudentsService {
       this.prisma.student.count({ where }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async findOne(id: number) {
-    const record = await this.prisma.student.findFirst({ where: { id, deletedAt: null } });
+    const record = await this.prisma.student.findFirst({
+      where: { id, deletedAt: null },
+    });
     if (!record) throw new NotFoundException('Student not found');
     return record;
   }
 
   async update(id: number, updateDto: UpdateStudentDto) {
     await this.findOne(id);
-    return this.prisma.student.update({ where: { id }, data: updateDto as any });
+    return this.prisma.student.update({ where: { id }, data: updateDto });
   }
 
   async remove(id: number) {
     await this.findOne(id);
-    return this.prisma.student.update({ where: { id }, data: { deletedAt: new Date() } });
+    return this.prisma.student.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
   }
 }

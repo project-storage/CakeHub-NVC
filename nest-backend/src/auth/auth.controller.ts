@@ -13,7 +13,10 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
-  @ApiResponse({ status: 200, description: 'Return access token and refresh token.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return access token and refresh token.',
+  })
   @ApiResponse({ status: 401, description: 'Invalid credentials.' })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);

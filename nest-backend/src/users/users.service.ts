@@ -12,7 +12,7 @@ export class UsersService {
   async create(registerDto: RegisterDto) {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(registerDto.password, salt);
-    
+
     return this.prisma.user.create({
       data: {
         ...registerDto,
@@ -29,7 +29,7 @@ export class UsersService {
 
   async findAll(page: number = 1, limit: number = 10, search?: string) {
     const skip = (page - 1) * limit;
-    
+
     const where: Prisma.UserWhereInput = {
       deletedAt: null,
       ...(search && {
@@ -92,9 +92,9 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
-    
-    const updateData: any = { ...updateUserDto };
-    
+
+    const updateData: Prisma.UserUpdateInput = { ...updateUserDto };
+
     if (updateUserDto.password) {
       const salt = await bcrypt.genSalt();
       updateData.password = await bcrypt.hash(updateUserDto.password, salt);

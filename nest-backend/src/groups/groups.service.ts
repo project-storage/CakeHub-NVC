@@ -9,7 +9,7 @@ export class GroupsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createDto: CreateGroupDto) {
-    return this.prisma.group.create({ data: createDto as any });
+    return this.prisma.group.create({ data: createDto });
   }
 
   async findAll(page: number = 1, limit: number = 10, search?: string) {
@@ -17,34 +17,45 @@ export class GroupsService {
     const where: Prisma.GroupWhereInput = {
       deletedAt: null,
       ...(search && {
-        OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { advisor: { contains: search, mode: 'insensitive' } },
-        ],
+        name: { contains: search, mode: 'insensitive' },
       }),
     };
 
     const [data, total] = await Promise.all([
-      this.prisma.group.findMany({ where, skip, take: limit }),
+      this.prisma.group.findMany({
+        where,
+        skip,
+        take: limit,
+        include: { degree: true, department: true },
+      }),
       this.prisma.group.count({ where }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async findOne(id: number) {
-    const record = await this.prisma.group.findFirst({ where: { id, deletedAt: null } });
+    const record = await this.prisma.group.findFirst({
+      where: { id, deletedAt: null },
+      include: { degree: true, department: true },
+    });
     if (!record) throw new NotFoundException('Group not found');
     return record;
   }
 
   async update(id: number, updateDto: UpdateGroupDto) {
     await this.findOne(id);
-    return this.prisma.group.update({ where: { id }, data: updateDto as any });
+    return this.prisma.group.update({ where: { id }, data: updateDto });
   }
 
   async remove(id: number) {
     await this.findOne(id);
-    return this.prisma.group.update({ where: { id }, data: { deletedAt: new Date() } });
+    return this.prisma.group.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
   }
 }

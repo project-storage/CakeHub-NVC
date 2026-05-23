@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
@@ -24,8 +35,16 @@ export class GroupsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all groups' })
-  async findAll(@Query('page') page?: string, @Query('limit') limit?: string, @Query('search') search?: string) {
-    const result = await this.service.findAll(+(page || 1), +(limit || 10), search);
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    const result = await this.service.findAll(
+      +(page || 1),
+      +(limit || 10),
+      search,
+    );
     return { success: true, ...result };
   }
 
@@ -39,7 +58,10 @@ export class GroupsController {
   @Roles(Role.ADMIN, Role.ADVISOR)
   @Patch(':id')
   @ApiOperation({ summary: 'Update group' })
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateGroupDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateGroupDto,
+  ) {
     const data = await this.service.update(id, updateDto);
     return { success: true, data };
   }

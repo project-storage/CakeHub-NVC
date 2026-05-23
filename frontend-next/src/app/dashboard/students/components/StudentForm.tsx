@@ -94,8 +94,8 @@ export function StudentForm({ initialData, onSubmit, loading }: StudentFormProps
             <FormItem>
               <FormLabel>Group</FormLabel>
               <Select
-                onValueChange={(val) => field.onChange(val ? Number(val) : null)}
-                defaultValue={field.value?.toString()}
+                onValueChange={(val) => field.onChange(val && val !== "0" ? Number(val) : null)}
+                defaultValue={field.value?.toString() || "0"}
               >
                 <FormControl>
                   <SelectTrigger>

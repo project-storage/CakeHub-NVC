@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto, UpdateOrderDto } from './dto/create-order.dto';
 import { Prisma, OrderStatus } from '@prisma/client';
@@ -13,15 +17,21 @@ export class OrdersService {
     // Use Prisma Transaction
     return this.prisma.$transaction(async (tx) => {
       // Create the order
-      const remainingAmount = orderData.totalPrice - (orderData.depositAmount || 0);
-      
+      const remainingAmount =
+        orderData.totalPrice - (orderData.depositAmount || 0);
+
       const order = await tx.order.create({
         data: {
           ...orderData,
           remainingAmount,
-          status: remainingAmount === 0 ? OrderStatus.PAID : (orderData.depositAmount ? OrderStatus.DEPOSITED : OrderStatus.PENDING),
+          status:
+            remainingAmount === 0
+              ? OrderStatus.PAID
+              : orderData.depositAmount
+                ? OrderStatus.DEPOSITED
+                : OrderStatus.PENDING,
           orderDetails: {
-            create: orderDetails.map(detail => ({
+            create: orderDetails.map((detail) => ({
               cakeId: detail.cakeId,
               quantity: detail.quantity,
               price: detail.price,
@@ -37,7 +47,9 @@ export class OrdersService {
       for (const detail of orderDetails) {
         const cake = await tx.cake.findUnique({ where: { id: detail.cakeId } });
         if (!cake || cake.stock < detail.quantity) {
-          throw new BadRequestException(`Insufficient stock for cake ID ${detail.cakeId}`);
+          throw new BadRequestException(
+            `Insufficient stock for cake ID ${detail.cakeId}`,
+          );
         }
         await tx.cake.update({
           where: { id: detail.cakeId },

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { OrderStatus } from '@prisma/client';
@@ -25,8 +29,12 @@ export class PaymentsService {
         data: createPaymentDto,
       });
 
-      const remaining = Math.max(0, order.remainingAmount - createPaymentDto.amount);
-      const newStatus = remaining === 0 ? OrderStatus.PAID : OrderStatus.DEPOSITED;
+      const remaining = Math.max(
+        0,
+        order.remainingAmount - createPaymentDto.amount,
+      );
+      const newStatus =
+        remaining === 0 ? OrderStatus.PAID : OrderStatus.DEPOSITED;
 
       await tx.order.update({
         where: { id: order.id },

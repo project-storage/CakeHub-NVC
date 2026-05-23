@@ -1,6 +1,11 @@
 import { Controller, Get, UseGuards, Query, Res } from '@nestjs/common';
 import { ReportService } from './report.service';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -18,7 +23,10 @@ export class ReportController {
   @Get('order-summary')
   @ApiOperation({ summary: 'Order Summary Report' })
   @ApiQuery({ name: 'export', enum: ['json', 'excel', 'pdf'], required: false })
-  async getOrderSummary(@Query('export') exportType: string, @Res({ passthrough: true }) res: Response) {
+  async getOrderSummary(
+    @Query('export') exportType: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     if (exportType === 'excel' || exportType === 'pdf') {
       return this.reportService.getOrderSummary(res, exportType);
     }
@@ -30,7 +38,10 @@ export class ReportController {
   @Get('revenue-summary')
   @ApiOperation({ summary: 'Revenue Summary Report' })
   @ApiQuery({ name: 'export', enum: ['json', 'excel', 'pdf'], required: false })
-  async getRevenueSummary(@Query('export') exportType: string, @Res({ passthrough: true }) res: Response) {
+  async getRevenueSummary(
+    @Query('export') exportType: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     if (exportType === 'excel' || exportType === 'pdf') {
       return this.reportService.getRevenueSummary(res, exportType);
     }

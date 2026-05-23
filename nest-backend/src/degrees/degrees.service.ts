@@ -9,7 +9,7 @@ export class DegreesService {
   constructor(private prisma: PrismaService) {}
 
   async create(createDto: CreateDegreeDto) {
-    return this.prisma.degree.create({ data: createDto as any });
+    return this.prisma.degree.create({ data: createDto });
   }
 
   async findAll(page: number = 1, limit: number = 10, search?: string) {
@@ -17,9 +17,7 @@ export class DegreesService {
     const where: Prisma.DegreeWhereInput = {
       deletedAt: null,
       ...(search && {
-        OR: [
-          { degreeName: { contains: search, mode: 'insensitive' } },
-        ],
+        degreeName: { contains: search, mode: 'insensitive' },
       }),
     };
 
@@ -28,22 +26,30 @@ export class DegreesService {
       this.prisma.degree.count({ where }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async findOne(id: number) {
-    const record = await this.prisma.degree.findFirst({ where: { id, deletedAt: null } });
+    const record = await this.prisma.degree.findFirst({
+      where: { id, deletedAt: null },
+    });
     if (!record) throw new NotFoundException('Degree not found');
     return record;
   }
 
   async update(id: number, updateDto: UpdateDegreeDto) {
     await this.findOne(id);
-    return this.prisma.degree.update({ where: { id }, data: updateDto as any });
+    return this.prisma.degree.update({ where: { id }, data: updateDto });
   }
 
   async remove(id: number) {
     await this.findOne(id);
-    return this.prisma.degree.update({ where: { id }, data: { deletedAt: new Date() } });
+    return this.prisma.degree.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
   }
 }

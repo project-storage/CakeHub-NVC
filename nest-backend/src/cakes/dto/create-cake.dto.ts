@@ -21,5 +21,4 @@ export class CreateCakeDto {
   @IsNotEmpty()
   @IsNumber()
   stock: number;
-
 }

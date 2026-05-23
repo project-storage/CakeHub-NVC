@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { CakesService } from './cakes.service';
 import { CreateCakeDto } from './dto/create-cake.dto';
 import { UpdateCakeDto } from './dto/update-cake.dto';
@@ -24,8 +35,16 @@ export class CakesController {
 
   @Get()
   @ApiOperation({ summary: 'Get all cakes' })
-  async findAll(@Query('page') page?: string, @Query('limit') limit?: string, @Query('search') search?: string) {
-    const result = await this.service.findAll(+(page || 1), +(limit || 10), search);
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    const result = await this.service.findAll(
+      +(page || 1),
+      +(limit || 10),
+      search,
+    );
     return { success: true, ...result };
   }
 
@@ -39,7 +58,10 @@ export class CakesController {
   @Roles(Role.ADMIN, Role.ADVISOR)
   @Patch(':id')
   @ApiOperation({ summary: 'Update cake' })
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateCakeDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateCakeDto,
+  ) {
     const data = await this.service.update(id, updateDto);
     return { success: true, data };
   }
