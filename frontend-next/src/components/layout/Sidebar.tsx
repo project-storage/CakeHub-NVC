@@ -36,12 +36,10 @@ export function Sidebar() {
           className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-border bg-card shadow-xl md:shadow-none"
         >
           <div className="flex h-20 items-center justify-between px-6">
-            <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl blue-sky-premium-gradient text-white shadow-lg shadow-primary/20">
-                <Cake className="h-5 w-5" />
-              </div>
-              <span className="text-lg font-bold tracking-tight text-primary">
-                CakeHub
+            <Link href="/dashboard" className="flex items-center gap-2.5">
+              <img src="/nvc.png" alt="NVC Logo" className="h-9 w-auto object-contain" />
+              <span className="text-lg font-extrabold tracking-tight text-primary">
+                CakeHub NVC
               </span>
             </Link>
             <Button 

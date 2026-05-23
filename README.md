@@ -56,16 +56,69 @@
 
 ### เริ่มต้นรันระบบด้วย Docker (Quick Start)
 1. Clone โปรเจคลงในเครื่อง
-2. รันคำสั่งต่อไปนี้ใน Terminal:
+2. รันคำสั่งต่อไปนี้ใน Terminal เพื่อเริ่มรันแบบสำเร็จรูป (Production Build):
 
 ```bash
 docker-compose up --build
 ```
 
-- **Premium Customer Storefront:** [http://localhost:3001](http://localhost:3001)
+- **Premium Customer Storefront (Redirects to Login):** [http://localhost:3001](http://localhost:3001)
 - **Advisor/Admin Dashboard:** [http://localhost:3001/dashboard](http://localhost:3001/dashboard)
 - **Backend API:** [http://localhost:3000/api](http://localhost:3000/api)
 - **Swagger Documentation:** [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
+
+---
+
+## ⚡ คู่มือสำหรับนักพัฒนา (Development & Live Hot-Reload Guide)
+
+เพื่อให้การแก้ไขและพัฒนาโค้ดมีประสิทธิภาพสูงสุด โดยไม่ต้องสั่งบิลด์ใหม่ทุกรอบ มี 2 วิธีหลักดังนี้:
+
+### วิธีที่ 1: รันฐานข้อมูลบน Docker + รัน App เครื่องโลคอล (แนะนำที่สุด 🚀)
+วิธีนี้ทำให้การทำ Hot-Reload ทำงานเสร็จสิ้นภายในเสี้ยววินาทีเมื่อเซฟไฟล์ สะดวกและรวดเร็วที่สุด:
+
+1. **เปิดเฉพาะฐานข้อมูล PostgreSQL บน Docker:**
+   ```bash
+   docker-compose up postgres
+   ```
+2. **รันระบบหลังบ้าน (Backend NestJS) ในโหมดพัฒนา:**
+   เปิด Terminal ใหม่แล้วไปที่ห้อง `nest-backend`:
+   ```bash
+   cd nest-backend
+   npm run start:dev
+   ```
+3. **รันระบบหน้าบ้าน (Frontend Next.js) ในโหมดพัฒนา:**
+   เปิด Terminal อีกบานแล้วไปที่ห้อง `frontend-next`:
+   ```bash
+   cd frontend-next
+   npm run dev
+   ```
+
+---
+
+### วิธีที่ 2: ใช้ Docker Volume Mounts (รันทุกอย่างใน Docker)
+หากต้องการรัน App ทุกอย่างผ่าน Docker เสมอ สามารถเพิ่มการตั้งค่า Volumes ในไฟล์ `docker-compose.yml` เพื่อให้โค้ดข้างในซิงค์กับโฟลเดอร์ข้างนอกอัตโนมัติ:
+
+1. แก้ไข `docker-compose.yml` บริเวณบริการ `backend` และ `frontend`:
+   ```yaml
+     backend:
+       # ...
+       volumes:
+         - ./nest-backend:/app
+         - /app/node_modules
+       command: npm run start:dev
+
+     frontend:
+       # ...
+       volumes:
+         - ./frontend-next:/app
+         - /app/node_modules
+         - /app/.next
+       command: npm run dev
+   ```
+2. สั่งรันขึ้นมาใช้งาน:
+   ```bash
+   docker-compose up --build
+   ```
 
 ---
 

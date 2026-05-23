@@ -5,7 +5,7 @@ const isServer = typeof window === 'undefined';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export const apiClient = ky.create({
-  prefixUrl: API_URL,
+  prefix: API_URL,
   timeout: 10000,
   hooks: {
     beforeRequest: [

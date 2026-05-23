@@ -8,8 +8,13 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CakeHub - Premium Cake Booking & Ordering",
+  title: "CakeHub NVC - NAKHON PATHOM VOCATIONAL COLLEGE",
   description: "Experience absolute luxury in ordering customized bakery and classroom cake bookings.",
+  icons: {
+    icon: "/nvc.png",
+    shortcut: "/nvc.png",
+    apple: "/nvc.png",
+  },
 };
 
 export default function RootLayout({

@@ -72,11 +72,9 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl blue-sky-premium-gradient text-white shadow-lg shadow-primary/20 mb-4">
-            <Cake className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight">CakeHub</h1>
+        <div className="flex flex-col items-center mb-6">
+          <img src="/nvc.png" alt="NVC College Logo" className="h-24 w-auto mb-3 object-contain drop-shadow-sm" />
+          <h1 className="text-2xl font-extrabold tracking-tight">CakeHub NVC</h1>
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Management Suite</p>
         </div>
 
