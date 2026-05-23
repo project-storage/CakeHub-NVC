@@ -7,12 +7,14 @@ const numericSchema = z.union([z.number(), z.string()]).pipe(z.coerce.number());
 export const orderDetailSchema = z.object({
   cakeId: numericSchema,
   quantity: numericSchema.pipe(z.number().min(1)),
+  price: numericSchema.pipe(z.number().min(0)),
 });
 
 export const orderSchema = z.object({
   studentId: numericSchema,
+  totalPrice: numericSchema.pipe(z.number().min(0)),
   depositAmount: numericSchema.pipe(z.number().min(0)).optional(),
-  items: z.array(orderDetailSchema).min(1, "At least one cake must be selected"),
+  orderDetails: z.array(orderDetailSchema).min(1, "At least one cake must be selected"),
 });
 
 export type OrderDto = z.infer<typeof orderSchema>;

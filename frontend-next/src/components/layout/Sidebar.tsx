@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/utils/utils";
 import { useUIStore } from "@/store/useUIStore";
-import { Home, ShoppingCart, Users, Layers, Cake, LogOut, CreditCard, FileText, ChevronRight } from "lucide-react";
+import { Home, ShoppingCart, Users, Layers, Cake, LogOut, CreditCard, FileText, X } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { motion, AnimatePresence } from "motion/react";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home, roles: ["ADMIN", "ADVISOR", "USER"] },
@@ -21,7 +22,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { sidebarOpen } = useUIStore();
+  const { sidebarOpen, setSidebarOpen } = useUIStore();
   const { logout, user } = useAuthStore();
 
   return (
@@ -31,24 +32,32 @@ export function Sidebar() {
           initial={{ x: -280, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -280, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-border bg-white dark:bg-slate-950 shadow-sm"
+          transition={{ type: "spring", stiffness: 400, damping: 40 }}
+          className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-border bg-card shadow-xl md:shadow-none"
         >
-          <div className="flex h-24 items-center px-8">
+          <div className="flex h-20 items-center justify-between px-6">
             <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl blue-sky-premium-gradient text-white shadow-lg shadow-primary/30">
-                <Cake className="h-6 w-6" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl blue-sky-premium-gradient text-white shadow-lg shadow-primary/20">
+                <Cake className="h-5 w-5" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-primary">
+              <span className="text-lg font-bold tracking-tight text-primary">
                 CakeHub
               </span>
             </Link>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setSidebarOpen(false)}
+              className="md:hidden rounded-xl h-9 w-9"
+            >
+              <X className="h-5 w-5 text-muted-foreground" />
+            </Button>
           </div>
 
-          <div className="flex-1 px-4 space-y-6 overflow-y-auto custom-scrollbar mt-4">
+          <div className="flex-1 px-3 space-y-6 overflow-y-auto custom-scrollbar mt-4">
             <div>
-              <p className="px-4 mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
-                Platform
+              <p className="px-4 mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                Menu
               </p>
               <div className="space-y-1">
                 {navItems.map((item) => {
@@ -62,21 +71,21 @@ export function Sidebar() {
                       key={item.name}
                       href={item.href}
                       className={cn(
-                        "group relative flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-bold transition-all duration-200",
+                        "group relative flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200",
                         isActive
-                          ? "bg-primary text-white shadow-md shadow-primary/20"
-                          : "text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-900"
+                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/10"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
                       )}
                     >
                       <item.icon className={cn(
                         "h-5 w-5 transition-transform duration-200 group-hover:scale-110",
-                        isActive ? "text-white" : "text-slate-400 group-hover:text-primary"
+                        isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
                       )} />
                       <span className="flex-1">{item.name}</span>
                       {isActive && (
                         <motion.div
-                          layoutId="sidebar-dot"
-                          className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full shadow-sm"
+                          layoutId="sidebar-active-indicator"
+                          className="absolute right-3 w-1.5 h-1.5 bg-primary-foreground rounded-full"
                         />
                       )}
                     </Link>
@@ -86,14 +95,14 @@ export function Sidebar() {
             </div>
           </div>
 
-          <div className="p-6 mt-auto border-t border-border/50">
-            <div className="flex items-center gap-3 mb-6 px-2">
-              <div className="h-10 w-10 rounded-2xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-sm font-bold text-primary border border-primary/10">
+          <div className="p-4 mt-auto border-t border-border/50">
+            <div className="flex items-center gap-3 mb-4 px-2">
+              <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center text-sm font-bold text-primary border border-primary/10">
                 {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-sm font-bold truncate text-slate-900 dark:text-white">{user?.firstName} {user?.lastName}</span>
-                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{user?.role}</span>
+                <span className="text-sm font-bold truncate">{user?.firstName} {user?.lastName}</span>
+                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest leading-none">{user?.role}</span>
               </div>
             </div>
             <button
@@ -101,10 +110,10 @@ export function Sidebar() {
                 logout();
                 window.location.href = "/login";
               }}
-              className="flex w-full items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-bold text-rose-500 transition-all duration-200 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-destructive transition-all duration-200 hover:bg-destructive/10"
             >
               <LogOut className="h-5 w-5" />
-              <span>Logout</span>
+              <span>Sign out</span>
             </button>
           </div>
         </motion.aside>

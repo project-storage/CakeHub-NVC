@@ -37,7 +37,10 @@ export default function CreateOrderPage() {
       toast.success("Order created successfully");
       router.push("/dashboard/orders");
     },
-    onError: () => toast.error("Failed to create order"),
+    onError: (error: any) => {
+      console.error(error);
+      toast.error("Failed to create order");
+    },
   });
 
   const addItem = () => {
@@ -66,10 +69,22 @@ export default function CreateOrderPage() {
     if (items.length === 0) return toast.error("Please add at least one cake");
     if (items.some(i => i.cakeId === 0)) return toast.error("Please select a cake for all items");
 
+    const totalPrice = calculateTotal();
+    
+    const orderDetails = items.map(item => {
+      const cake = cakes?.data.find(c => c.id === item.cakeId);
+      return {
+        cakeId: item.cakeId,
+        quantity: item.quantity,
+        price: cake?.price || 0
+      };
+    });
+
     createMutation.mutate({
       studentId: Number(selectedStudent),
+      totalPrice: totalPrice,
       depositAmount: deposit,
-      items: items,
+      orderDetails: orderDetails,
     });
   };
 
