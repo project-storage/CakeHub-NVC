@@ -1,127 +1,99 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateOrderDto, UpdateOrderDto } from './dto/create-order.dto';
-import { Prisma, OrderStatus } from '@prisma/client';
+import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateOrderDto, UpdateOrderDto } from "./dto/create-order.dto";
+import { Prisma, Role, OrderStatus } from "@prisma/client";
+import { UserPayload } from "../common/types";
 
 @Injectable()
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createOrderDto: CreateOrderDto) {
-    const { orderDetails, ...orderData } = createOrderDto;
-
-    // Use Prisma Transaction
-    return this.prisma.$transaction(async (tx) => {
-      // Create the order
-      const remainingAmount =
-        orderData.totalPrice - (orderData.depositAmount || 0);
-
-      const order = await tx.order.create({
-        data: {
-          ...orderData,
-          remainingAmount,
-          status:
-            remainingAmount === 0
-              ? OrderStatus.PAID
-              : orderData.depositAmount
-                ? OrderStatus.DEPOSITED
-                : OrderStatus.PENDING,
-          orderDetails: {
-            create: orderDetails.map((detail) => ({
-              cakeId: detail.cakeId,
-              quantity: detail.quantity,
-              price: detail.price,
-            })),
-          },
+  async create(createDto: CreateOrderDto) {
+    const { orderDetails, ...orderData } = createDto;
+    
+    return this.prisma.order.create({
+      data: {
+        ...orderData,
+        remainingAmount: orderData.totalPrice - (orderData.depositAmount || 0),
+        status: orderData.depositAmount && orderData.depositAmount > 0 ? OrderStatus.DEPOSITED : OrderStatus.PENDING,
+        orderDetails: {
+          create: orderDetails,
         },
-        include: {
-          orderDetails: true,
-        },
-      });
-
-      // Update Cake stock
-      for (const detail of orderDetails) {
-        const cake = await tx.cake.findUnique({ where: { id: detail.cakeId } });
-        if (!cake || cake.stock < detail.quantity) {
-          throw new BadRequestException(
-            `Insufficient stock for cake ID ${detail.cakeId}`,
-          );
-        }
-        await tx.cake.update({
-          where: { id: detail.cakeId },
-          data: { stock: cake.stock - detail.quantity },
-        });
-      }
-
-      return order;
+      },
+      include: { orderDetails: true },
     });
   }
 
-  async findAll(page: number = 1, limit: number = 10, status?: OrderStatus) {
+  async findAll(user: UserPayload, page: number = 1, limit: number = 10, status?: OrderStatus) {
     const skip = (page - 1) * limit;
+    
+    let groupIds: number[] = [];
+    if (user.role === Role.ADVISOR) {
+      const groups = await this.prisma.group.findMany({
+        where: { advisorId: user.id },
+        select: { id: true }
+      });
+      groupIds = groups.map(g => g.id);
+    }
+
     const where: Prisma.OrderWhereInput = {
       deletedAt: null,
       ...(status && { status }),
+      ...(user.role === Role.ADVISOR && {
+        student: { groupId: { in: groupIds } }
+      }),
     };
 
-    const [orders, total] = await Promise.all([
+    const [data, total] = await Promise.all([
       this.prisma.order.findMany({
         where,
         skip,
         take: limit,
         include: {
-          user: { select: { firstName: true, lastName: true, email: true } },
-          student: { select: { fullName: true, studentCode: true } },
-          orderDetails: { include: { cake: { select: { cakeName: true } } } },
+          student: true,
+          orderDetails: { include: { cake: true } },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.order.count({ where }),
     ]);
 
-    return {
-      data: orders,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, user: UserPayload) {
     const order = await this.prisma.order.findFirst({
       where: { id, deletedAt: null },
       include: {
-        user: { select: { firstName: true, lastName: true, email: true } },
-        student: { select: { fullName: true, studentCode: true } },
-        orderDetails: { include: { cake: { select: { cakeName: true } } } },
+        student: { include: { group: true } },
+        orderDetails: { include: { cake: true } },
         payments: true,
       },
     });
 
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
+    if (!order) throw new NotFoundException("Order not found");
+    
+    if (user.role === Role.ADVISOR) {
+        if (!order.student?.groupId) throw new ForbiddenException("You do not have access to this order");
+        const group = await this.prisma.group.findFirst({
+            where: { id: order.student.groupId, advisorId: user.id }
+        });
+        if (!group) throw new ForbiddenException("You do not have access to this order");
     }
 
     return order;
   }
 
-  async update(id: number, updateOrderDto: UpdateOrderDto) {
-    await this.findOne(id);
+  async update(id: number, updateOrderDto: UpdateOrderDto, user: UserPayload) {
+    await this.findOne(id, user);
     return this.prisma.order.update({
       where: { id },
       data: updateOrderDto,
     });
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
+  async remove(id: number, user: UserPayload) {
+    await this.findOne(id, user);
     return this.prisma.order.update({
       where: { id },
       data: { deletedAt: new Date(), status: OrderStatus.CANCELLED },

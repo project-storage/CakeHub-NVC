@@ -18,6 +18,7 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   orders    Order[]
+  groups    Group[]   @relation("AdvisorGroups")
 
   @@map("users")
 }
@@ -42,12 +43,13 @@ model Student {
 model Group {
   id           Int         @id @default(autoincrement())
   name         String
-  advisor      String?
+  advisorId    Int?
   degreeId     Int?
   departmentId Int?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   deletedAt    DateTime?
+  advisor      User?       @relation("AdvisorGroups", fields: [advisorId], references: [id])
   degree       Degree?     @relation(fields: [degreeId], references: [id])
   department   Department? @relation(fields: [departmentId], references: [id])
   students     Student[]

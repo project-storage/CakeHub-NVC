@@ -144,7 +144,7 @@ export default function LoginPage() {
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
                 <div className="text-center text-xs font-semibold text-muted-foreground">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link href="/register" className="text-primary hover:underline underline-offset-4">
                     Sign up
                   </Link>

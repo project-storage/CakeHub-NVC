@@ -1,12 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { OrderStatus } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { OrderStatus, Role, Prisma } from "@prisma/client";
+import { UserPayload } from "../common/types";
 
 @Injectable()
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getStatistics() {
+  async getStatistics(user: UserPayload) {
+    let groupIds: number[] = [];
+    if (user.role === Role.ADVISOR) {
+      const groups = await this.prisma.group.findMany({
+        where: { advisorId: user.id },
+        select: { id: true }
+      });
+      groupIds = groups.map(g => g.id);
+    }
+
+    const orderWhere: Prisma.OrderWhereInput = {
+      deletedAt: null,
+      ...(user.role === Role.ADVISOR && {
+        student: { groupId: { in: groupIds } }
+      })
+    };
+
+    const orderDetailWhere: Prisma.OrderDetailWhereInput = {
+      order: {
+        deletedAt: null,
+        status: { not: OrderStatus.CANCELLED },
+        ...(user.role === Role.ADVISOR && {
+          student: { groupId: { in: groupIds } }
+        })
+      }
+    };
+
     const [
       totalOrders,
       revenueAgg,
@@ -15,40 +42,36 @@ export class DashboardService {
       topSellingCakes,
     ] = await Promise.all([
       // Total Orders
-      this.prisma.order.count({ where: { deletedAt: null } }),
+      this.prisma.order.count({ where: orderWhere }),
 
       // Total Revenue (PAID or DELIVERED orders)
       this.prisma.order.aggregate({
         _sum: { totalPrice: true },
         where: {
+          ...orderWhere,
           status: { in: [OrderStatus.PAID, OrderStatus.DELIVERED] },
-          deletedAt: null,
         },
       }),
 
       // Pending Payment
       this.prisma.order.aggregate({
         _sum: { remainingAmount: true },
-        where: { deletedAt: null },
+        where: orderWhere,
       }),
 
       // Total Cakes Sold
       this.prisma.orderDetail.aggregate({
         _sum: { quantity: true },
-        where: {
-          order: { deletedAt: null, status: { not: OrderStatus.CANCELLED } },
-        },
+        where: orderDetailWhere,
       }),
 
       // Top Selling Cake
       this.prisma.orderDetail.groupBy({
-        by: ['cakeId'],
+        by: ["cakeId"],
         _sum: { quantity: true },
-        orderBy: { _sum: { quantity: 'desc' } },
+        orderBy: { _sum: { quantity: "desc" } },
         take: 5,
-        where: {
-          order: { deletedAt: null, status: { not: OrderStatus.CANCELLED } },
-        },
+        where: orderDetailWhere,
       }),
     ]);
 

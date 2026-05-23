@@ -1,12 +1,13 @@
-import { Role } from '@prisma/client';
+import { Role } from "@prisma/client";
 
-export interface UserPayload {
+export class UserPayload {
   email: string;
   sub: number;
+  id: number;
   role: Role;
 }
 
-export interface SafeUser {
+export class SafeUser {
   id: number;
   email: string;
   firstName: string;
