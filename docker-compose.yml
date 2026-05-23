@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: orders-cake-db
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=orders_cake
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./nest-backend
+      dockerfile: Dockerfile
+    container_name: orders-cake-backend
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/orders_cake?schema=public
+      - JWT_SECRET=super_secret_key
+      - JWT_REFRESH_SECRET=super_secret_refresh_key
+      - PORT=3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend-next
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+    container_name: orders-cake-frontend
+    ports:
+      - '3001:3001'
+    depends_on:
+      - backend
+
+  # jenkins:
+  #   image: jenkins/jenkins:lts
+  #   container_name: orders-cake-jenkins
+  #   ports:
+  #     - '8080:8080'
+  #     - '50000:50000'
+  #   volumes:
+  #     - jenkins_data:/var/jenkins_home
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   environment:
+  #     - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+
+volumes:
+  pgdata:
+  # jenkins_data:
