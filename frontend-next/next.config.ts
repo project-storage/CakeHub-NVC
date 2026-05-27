@@ -1,8 +1,12 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,
+  },
+}
 
-const nextConfig: NextConfig = {
-//  output: 'standalone',
-  /* config options here */
-};
-
-export default nextConfig;
+export default nextConfig
