@@ -1,6 +1,6 @@
 # 🎂 CakeHub: Enterprise Cake Management System
 
-ระบบบริหารจัดการสั่งจองเค้กและข้อมูลนักเรียน (Cake Booking & Student Management System) ที่ออกแบบมาให้มีความทันสมัย ใช้งานง่าย และรองรับการทำงานในระดับองค์กร (Enterprise Edition 2026)
+An elegant, modern, and responsive Cake Booking & Student Management System designed for enterprise-grade operations (Enterprise Edition 2026).
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![NestJS 11](https://img.shields.io/badge/NestJS-11-E0234E?style=flat-square&logo=nestjs)](https://nestjs.com/)
@@ -9,60 +9,60 @@
 
 ---
 
-## 🌟 จุดเด่นของระบบ (System Highlights)
+## 🌟 Key Features
 
 ### 🎨 Modern & Responsive UI
-- **Refined Layout:** หน้าจอถูกออกแบบใหม่ทั้งหมดในสไตล์ "Premium" เน้นความสะอาดตา (Clean Design) และความลื่นไหลในการใช้งานสไตล์ Stripe และ Linear
-- **Fully Responsive:** รองรับการใช้งานสมบูรณ์แบบทั้งบน Desktop, Tablet และ Mobile พร้อม Sidebar แบบ Smart Drawer สำหรับหน้าจอมือถือ
-- **Bakery Premium Aesthetic:** ชุดเฉดสีและการออกแบบที่สะท้อนถึงเบเกอรี่ระดับพรีเมียม สเปซสมดุล เงาบางเบา และปุ่มกดที่ลื่นไหล
+- **Refined Layout:** Fully redesigned from scratch with a premium aesthetic, featuring clean layouts, balance spaces, subtle shadows, and smooth transitions inspired by Stripe and Linear interfaces.
+- **Fully Responsive:** Offers a flawless experience across Desktop, Tablet, and Mobile devices with a smart Sidebar Drawer on mobile screens.
+- **Bakery Premium Aesthetic:** Sophisticated color palettes designed specifically to reflect a high-end bakery experience.
 
-### 🛍️ ระบบหน้าร้านค้าสำหรับลูกค้าทั่วไป (Premium Storefront)
-- **Browse & Filter:** หน้าแรกสำหรับการเลือกซื้อเค้ก รองรับการค้นหารวมถึงการกรองขนาดปอนด์ (Personal 1LB, Medium 2LB, Party 3LB+) แบบทันใจ
-- **Zustand Cart Drawer:** ตะกร้าสินค้าด้านข้างแบบสไลด์ (Slide-over Sheet) คำนวณราคาสุทธิ มัดจำ และยอดค้างจ่ายทันที ป้องกันการกดเกินจำนวนในคลังสินค้า (Stock checking)
-- **Seamless Checkout:** ฟอร์มสั่งซื้อที่เชื่อมโยงกับฐานข้อมูลนักเรียนอย่างอัจฉริยะ ค้นหาประวัตินักเรียนอัตโนมัติ หากไม่มีในระบบจะทำการสมัครให้ออนเดอะฟลายโดยไม่รบกวนขั้นตอนการชำระเงิน
-- **Live Visual Tracking:** ไทม์ไลน์ติดตามความคืบหน้าการทำเค้ก (Order Timeline) 5 ขั้นตอน (`PENDING` ➔ `DEPOSITED` ➔ `PAID` ➔ `DELIVERED` ➔ `CANCELLED`) แบบมีแอนิเมชันจุดนำสายตา
+### 🛍️ Premium Storefront (For Customers)
+- **Browse & Filter:** Allows quick cake catalog browsing with instant pound-size filters (Personal 1LB, Medium 2LB, Party 3LB+).
+- **Zustand Cart Drawer:** A slide-over cart drawer that calculates total prices, deposit amounts, and remaining balances instantly while enforcing strict stock checks.
+- **Seamless Checkout:** Intelligently linked with the student database. It automatically retrieves existing student profiles or signs them up on-the-fly without interrupting the payment workflow.
+- **Live Visual Tracking:** Beautifully animated order timeline with five sequential tracking states (`PENDING` ➔ `DEPOSITED` ➔ `PAID` ➔ `DELIVERED` ➔ `CANCELLED`).
 
-### 👨‍🏫 ระบบสำหรับครูที่ปรึกษา (Advisor Specialization)
-- **Data Isolation:** ครูที่ปรึกษาจะเห็นเฉพาะข้อมูลนักเรียนและออเดอร์ใน "ห้องเรียนที่ตนเองดูแล" เท่านั้น เพื่อความเป็นส่วนตัวและความถูกต้องของข้อมูล
-- **Student Management:** สามารถ เพิ่ม ลบ และแก้ไขข้อมูลนักเรียนในกลุ่มที่รับผิดชอบได้โดยตรง
-- **Booking Mastery:** ทำรายการสั่งจองเค้กแทนนักเรียน ตรวจสอบยอดเงินมัดจำ และติดตามสถานะการชำระเงินได้แบบ Real-time
-- **Classroom Insights:** Dashboard ส่วนตัวที่จะแสดงสถิติเฉพาะห้องเรียนที่ดูแล (ยอดจองรวม, เค้กที่ได้รับความนิยม, ยอดเงินคงเหลือ)
+### 👨‍🏫 Advisor Specialization (For Advisors)
+- **Data Isolation:** Teachers/advisors only see student details and order data belonging to their assigned classroom to protect privacy and data integrity.
+- **Student Management:** Manage (CRUD) students inside their respective classroom groups directly.
+- **Booking Mastery:** Place cake bookings on behalf of students, track deposits, and monitor payment statuses in real-time.
+- **Classroom Insights:** A personalized classroom dashboard showing real-time statistics (total reservations, popular cakes, and outstanding balances).
 
-### 👑 ระบบผู้ดูแลระบบส่วนกลาง (Central Administrator Control)
-- **User Management CRUD:** เมนูการจัดการผู้ใช้งานระบบหลังบ้านแบบสมบูรณ์ สามารถสร้าง ค้นหา อัปเดต และระงับ/ลบผู้บัญชีผู้ใช้ (Admin, Advisor, User) ได้อย่างมีประสิทธิภาพและปลอดภัย
-- **Global Settings & References:** จัดการข้อมูลชุดอ้างอิงของสถาบัน ได้แก่ ชั้นเรียน (Groups), แผนกวิชา (Departments) และระดับการศึกษา (Degrees)
-- **Catalog Management:** ควบคุมดูแลคลังเบเกอรี่ (Cakes Inventory) รวมถึงการอัปเดตราคา จำนวนสต็อก และขนาดของเค้กแต่ละประเภท
-- **Omni Dashboard:** แดชบอร์ดสรุปสถิติมุมมองระดับสถาบัน แสดงผลยอดสั่งจอง ยอดชำระเงิน และการดำเนินการสั่งทำเค้กจากทุกห้องเรียน
+### 👑 Central Administrator Control (For Admins)
+- **User Management CRUD:** Complete admin interface to create, search, update, and suspend/delete system accounts (Admin, Advisor, User).
+- **Global Settings & References:** Easily manage institutional reference data including classes (Groups), departments (Departments), and education levels (Degrees).
+- **Catalog Management:** Full inventory control over the bakery catalog (Cakes Inventory) including pricing, stock quantities, and sizes.
+- **Omni Dashboard:** Institution-wide analytics showing total bookings, payments, and cake preparation statuses across all classrooms.
 
 ### 📄 Document & Verification
-- **Printable Receipts:** ระบบสามารถสั่งพิมพ์ใบสั่งจองเค้ก (Official Receipt) ออกมาเป็นรูปแบบเอกสารที่สวยงาม พร้อมพื้นที่สำหรับลายเซ็นนักเรียนและครูที่ปรึกษา
-- **Audit Ready:** ระบบจัดการสถานะออเดอร์และบันทึกรายงานการเงินพร้อมแนบสลิปผ่านทางหน้าร้าน
+- **Printable Receipts:** Generate official, beautifully formatted printable booking receipts with designated signature fields for students and advisors.
+- **Audit Ready:** Complete lifecycle tracking for orders and financial reports with slip verification attachments.
 
 ---
 
-## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
+## 🛠️ Tech Stack
 
 | Component | Technology |
 | :--- | :--- |
 | **Frontend Core** | Next.js 16 (App Router), TypeScript, Zustand (Persistent Cart & Session), TanStack Query v5 |
 | **API Client** | Ky Wrapper (Centralized interceptors, retry policy, 401 automatic token rotation) |
-| **Forms** | React Hook Form, Zod schemas validation |
-| **Styling** | Tailwind CSS 4, shadcn/ui, Lucide Icons, glassmorphism filters |
+| **Forms & Validation** | React Hook Form, Zod validation |
+| **Styling** | Tailwind CSS 4, shadcn/ui, Lucide Icons, Glassmorphism filters |
 | **Backend Core** | NestJS 11, TypeScript, Passport JWT (Access + Refresh Token) |
-| **Database** | PostgreSQL + Prisma ORM |
+| **Database** | PostgreSQL + Prisma ORM (Configured for Supabase with connection pooling) |
 | **Infrastructure** | Docker, Docker Compose |
 
 ---
 
-## 🏃 การเริ่มต้นใช้งาน (Getting Started)
+## 🏃 Getting Started
 
-### ความต้องการของระบบ (Prerequisites)
+### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Node.js 20+ (หากต้องการรันแบบ Manual)
+- Node.js 20+ (if running manually)
 
-### เริ่มต้นรันระบบด้วย Docker (Quick Start)
-1. Clone โปรเจคลงในเครื่อง
-2. รันคำสั่งต่อไปนี้ใน Terminal เพื่อเริ่มรันแบบสำเร็จรูป (Production Build):
+### Launching the Application with Docker
+1. Clone this repository to your local machine.
+2. Run the following command in your terminal to spin up the production build:
 
 ```bash
 docker-compose up --build
@@ -73,39 +73,41 @@ docker-compose up --build
 - **Backend API:** [http://localhost:3000/api](http://localhost:3000/api)
 - **Swagger Documentation:** [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
 
-### 🔑 ข้อมูลบัญชีผู้ใช้งานสำหรับทดสอบระบบ (Test Credentials)
+---
 
-เพื่อความสะดวกในการทดสอบระบบและสิทธิ์การเข้าถึงข้อมูลที่แตกต่างกัน สามารถใช้บัญชีผู้ใช้ทดสอบดังต่อไปนี้ (รหัสผ่านเริ่มต้นคือ `password123` สำหรับทุกบัญชี):
+### 🔑 Test Credentials
 
-| บทบาท (Role) | อีเมล (Email) | สิทธิ์การใช้งาน (Permissions) |
+To test different role scopes and permissions, use the credentials below (the default password is `password123` for all accounts):
+
+| Role | Email | Permissions / Features |
 | :--- | :--- | :--- |
-| **👑 Administrator** | `admin@example.com` | เข้าถึงและจัดการได้ทุกส่วนของระบบ รวมถึงการ CRUD ผู้ใช้งาน, ชั้นเรียน, แผนกวิชา, เค้ก และดูรายงานสรุปภาพรวมทั้งหมด |
-| **👨‍🏫 Advisor (ครูที่ปรึกษา 1)** | `advisor1@example.com` | จัดการนักเรียนและออเดอร์เฉพาะกลุ่มเรียน/ห้องเรียนที่ตนเองรับผิดชอบ พร้อมแดชบอร์ดสรุปสถิติเฉพาะห้องเรียน |
-| **👨‍🏫 Advisor (ครูที่ปรึกษา 2)** | `advisor2@example.com` | จัดการนักเรียนและออเดอร์เฉพาะกลุ่มเรียน/ห้องเรียนที่ดูแล (แยกส่วนกับครูท่านแรกตามหลัก Data Isolation) |
-| **👤 Regular User (ลูกค้าทั่วไป 1)** | `user1@example.com` | เข้าสั่งจองเค้กผ่าน Premium Storefront ปรับแต่งตะกร้าช้อปปิ้ง ชำระเงิน และติดตามสถานะออเดอร์ |
-| **👤 Regular User (ลูกค้าทั่วไป 2)** | `user2@example.com` | สั่งจองและติดตามสถานะออเดอร์ทั่วไป |
+| **👑 Administrator** | `admin@example.com` | Full system access. Manage users, classrooms, departments, cake inventories, and view global dashboards. |
+| **👨‍🏫 Advisor (Teacher 1)**| `advisor1@example.com` | Classroom-specific access. Manage students and bookings inside their own group with dedicated room analytics. |
+| **👨‍🏫 Advisor (Teacher 2)**| `advisor2@example.com` | Separate advisor access. Fully isolated data from Teacher 1. |
+| **👤 Regular User (Customer 1)** | `user1@example.com` | Place bookings on the storefront, modify cart items, upload payment slips, and track orders. |
+| **👤 Regular User (Customer 2)** | `user2@example.com` | Normal customer booking and reservation tracking. |
 
 ---
 
-## ⚡ คู่มือสำหรับนักพัฒนา (Development & Live Hot-Reload Guide)
+## ⚡ Development & Hot-Reload Guide
 
-เพื่อให้การแก้ไขและพัฒนาโค้ดมีประสิทธิภาพสูงสุด โดยไม่ต้องสั่งบิลด์ใหม่ทุกรอบ มี 2 วิธีหลักดังนี้:
+For the fastest developer experience without having to rebuild docker containers on every save:
 
-### วิธีที่ 1: รันฐานข้อมูลบน Docker + รัน App เครื่องโลคอล (แนะนำที่สุด 🚀)
-วิธีนี้ทำให้การทำ Hot-Reload ทำงานเสร็จสิ้นภายในเสี้ยววินาทีเมื่อเซฟไฟล์ สะดวกและรวดเร็วที่สุด:
+### Method 1: Docker Database + Local Running Apps (Highly Recommended 🚀)
+This approach triggers hot-reloading in less than a second:
 
-1. **เปิดเฉพาะฐานข้อมูล PostgreSQL บน Docker:**
+1. **Spin up ONLY the PostgreSQL database on Docker:**
    ```bash
    docker-compose up postgres
    ```
-2. **รันระบบหลังบ้าน (Backend NestJS) ในโหมดพัฒนา:**
-   เปิด Terminal ใหม่แล้วไปที่ห้อง `nest-backend`:
+2. **Run the Backend (NestJS) in development mode:**
+   Open a new terminal window, navigate to `nest-backend`, and run:
    ```bash
    cd nest-backend
    npm run start:dev
    ```
-3. **รันระบบหน้าบ้าน (Frontend Next.js) ในโหมดพัฒนา:**
-   เปิด Terminal อีกบานแล้วไปที่ห้อง `frontend-next`:
+3. **Run the Frontend (Next.js) in development mode:**
+   Open another terminal window, navigate to `frontend-next`, and run:
    ```bash
    cd frontend-next
    npm run dev
@@ -113,10 +115,10 @@ docker-compose up --build
 
 ---
 
-### วิธีที่ 2: ใช้ Docker Volume Mounts (รันทุกอย่างใน Docker)
-หากต้องการรัน App ทุกอย่างผ่าน Docker เสมอ สามารถเพิ่มการตั้งค่า Volumes ในไฟล์ `docker-compose.yml` เพื่อให้โค้ดข้างในซิงค์กับโฟลเดอร์ข้างนอกอัตโนมัติ:
+### Method 2: Docker Volume Mounts (Run Everything inside Docker)
+If you prefer running everything in Docker, you can mount volume paths in `docker-compose.yml` to automatically sync files:
 
-1. แก้ไข `docker-compose.yml` บริเวณบริการ `backend` และ `frontend`:
+1. Modify `docker-compose.yml` under both `backend` and `frontend` services:
    ```yaml
      backend:
        # ...
@@ -133,14 +135,14 @@ docker-compose up --build
          - /app/.next
        command: npm run dev
    ```
-2. สั่งรันขึ้นมาใช้งาน:
+2. Spin up the setup:
    ```bash
    docker-compose up --build
    ```
 
 ---
 
-## 📂 โครงสร้างโปรเจค (Project Structure)
+## 📂 Project Structure
 
 ```text
 .
@@ -152,18 +154,24 @@ docker-compose up --build
 │   │   ├── store/      # Zustand state engines
 │   │   └── services/   # Type-safe API request services
 ├── nest-backend/      # NestJS 11 Backend (API)
+│   ├── src/
+│   │   ├── supabase/   # Reusable Supabase SDK client module
+│   │   ├── prisma/     # Global Prisma Service module
+│   │   └── ...         # Feature modules (cakes, orders, auth, users, etc.)
 ├── docker-compose.yml # Docker Orchestration
-└── README.md          # คู่มือระบบสารสนเทศ
+└── README.md          # Project guide
 ```
 
 ---
 
-## 🔐 ข้อมูลความปลอดภัย (Security)
+## 🔐 Security & Optimization
 
-- **RBAC:** ระบบมีการตรวจสอบสิทธิ์ตามบทบาท (Admin, Advisor, User) ในทุก Endpoint
-- **Validation:** ใช้ Class Validator (Backend) และ Zod (Frontend) เพื่อความถูกต้องของข้อมูล 100%
-- **Sanitization:** กรองข้อมูลที่มีความสำคัญ (เช่น รหัสผ่าน) ออกจาก Response เสมอ
-- **Centralized Security Client:** บริหารจัดการส่ง JWT Token และต่ออายุ Session ทรานแซกชันอย่างปลอดภัยผ่าน Ky Interceptor
+- **RBAC (Role-Based Access Control):** Role validation guards applied on all backend endpoints (Admin, Advisor, User).
+- **Validation:** Strict validation rules implemented via `class-validator` (Backend) and `Zod` (Frontend) ensuring data accuracy.
+- **Sanitization:** Passwords and other sensitive fields are safely filtered out of all API response payloads.
+- **Centralized Security Client:** Seamless automatic handling of access/refresh JWT tokens and session rotation via Ky API client interceptors.
 
-## 📄 ใบอนุญาต (License)
-โปรเจคนี้จัดทำขึ้นเพื่อการใช้งานภายใน/การศึกษาเท่านั้น สำหรับรายละเอียดเพิ่มเติมสามารถดูได้ที่ `package.json` ของแต่ละ Module
+---
+
+## 📄 License
+This project is created for internal and educational purposes only. For dependency specifics, refer to the `package.json` file in their respective directories.

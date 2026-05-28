@@ -99,7 +99,7 @@ async function main() {
       const g = await prisma.group.create({
         data: {
           name: `${dept.departmentName} - ${deg.degreeName}`,
-          advisor: advisors[Math.floor(Math.random() * advisors.length)].firstName,
+          advisorId: advisors[Math.floor(Math.random() * advisors.length)].id,
           departmentId: dept.id,
           degreeId: deg.id,
         },

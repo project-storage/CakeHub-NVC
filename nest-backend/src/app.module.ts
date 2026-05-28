@@ -14,6 +14,7 @@ import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReportModule } from './report/report.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { SupabaseModule } from './supabase/supabase.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     PaymentsModule,
     ReportModule,
     DashboardModule,
+    SupabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
