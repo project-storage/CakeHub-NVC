@@ -6,7 +6,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export const apiClient = ky.create({
   prefix: API_URL,
-  timeout: 10000,
+  timeout: 45000,
   hooks: {
     beforeRequest: [
       (request: any) => {
