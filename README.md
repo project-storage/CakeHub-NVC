@@ -1,6 +1,6 @@
-# 🎂 CakeHub: Enterprise Cake Management System
+# 🎂 CakeHub: Nakhon Pathom Vocational College Cake System
 
-An elegant, modern, and responsive Cake Booking & Student Management System designed for enterprise-grade operations (Enterprise Edition 2026).
+An elegant, modern, and responsive Cake Booking & Student Management System designed specifically for Nakhon Pathom Vocational College (NVC).
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![NestJS 11](https://img.shields.io/badge/NestJS-11-E0234E?style=flat-square&logo=nestjs)](https://nestjs.com/)
